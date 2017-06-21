@@ -24,8 +24,8 @@ class Queens {
       if (!this.placements.includes(c)) {
         let colAdjust = 1;
         let diag = false;
-        for (let d = depth; d > 0; d--) {
-          if (this.placements[d-1] === c - colAdjust || this.placements[d-1] === c + colAdjust++) diag = true;
+        for (let d = depth-1; d >= 0; d--) {
+          if (this.placements[d] === c - colAdjust || this.placements[d] === c + colAdjust++) diag = true;
         }
         if (!diag) {
           this.placements.push(c);
