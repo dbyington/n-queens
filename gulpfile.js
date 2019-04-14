@@ -23,33 +23,3 @@ gulp.task('lint', function () {
     .pipe($.eslint.format())
     .pipe($.eslint.failAfterError());
 });
-
-// Remove solutions from exercises
-gulp.task('remove-solutions', ['lint'], function () {
-  del.sync('dist');
-  return gulp.src(addDefSrcIgnore(['**']), {dot: true})
-    .pipe($.replace(/^\s*(\/\/|<!--|\/\*)\s*REMOVE-START[\s\S]*?REMOVE-END\s*(\*\/|-->)?\s*$/gm, ''))
-    .pipe(gulp.dest('dist'));
-});
-
-// Prepare for distribution to students
-gulp.task('dist', ['remove-solutions'], function () {
-
-  function removeMaster (str) {
-    var strArr = str.split('-');
-    strArr[strArr.length - 1] === 'master' && strArr.pop();
-    return strArr.join('-');
-  }
-
-  const npmConfig = require('./package.json');
-  npmConfig.name = removeMaster(npmConfig.name);
-  npmConfig.repository.url = removeMaster(npmConfig.repository.url);
-  npmConfig.config.ghooks['pre-commit'] = 'gulp lint';
-  fs.writeFileSync('dist/package.json', JSON.stringify(npmConfig, null, 2));
-
-  const esLintConfig = require('./.eslintrc.json');
-  esLintConfig.rules['no-undef'] = 'off';
-  esLintConfig.rules['no-unused-vars'] = 'off';
-  fs.writeFileSync('dist/.eslintrc.json', JSON.stringify(esLintConfig, null, 2));
-
-});

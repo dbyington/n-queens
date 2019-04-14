@@ -1,54 +1,54 @@
 'use strict';
 const Console = console;
 
-function calc (mx) {
-  if (mx === 0) return 0;
+function calc (boardSize) {
+  if (boardSize === 0) return 0;
   let q = 0;
 
-  const pQ = (r = 1, c = 0, j = 0, n = 0) => {
-    if (r > mx) {
+  const placeQueen = (depth = 1, row = 0, major = 0, minor = 0) => {
+    if (depth > boardSize) {
       q++;
       // Console.log('Q!!!');
       return true;
     }
     // const pR = (c | j | n);
     // let mR = pR;
-    let mR = (c | j | n);
+    let thisRow = (row | major | minor);
     // // Console.log(`r: ${r}\tpR: ${mR.toString(2)}`);
-    for (let s = 1; s <= mx; s++) {
+    for (let s = 1; s <= boardSize; s++) {
       // // Console.log(`mR: ${mR.toString(2)}\tmR % 2: ${mR % 2}`);
 
       // // Console.log(`s: ${s}`);
-      let mC, mJ, mN, oJ = 0;
-      if (mR % 2 === 0) {
+      let myRow, myMajor, myMinor, originalMajor = 0;
+      if (thisRow % 2 === 0) {
       // // Console.log(`Try row: ${r} column: ${s}, mR ${mR.toString(2)}, pR ${mR.toString(2)}`);
-        mC = 1 << s-1;
+        myRow = 1 << s-1;
         // Create our major
         // if our major will over run the length of our board
         // clip it off
         // // Console.log((1<<mx-1).toString(2));
-        if (mC >= (1 << mx-1)) {
-          mJ = 0;
+        if (myRow >= (1 << boardSize-1)) {
+          myMajor = 0;
         } else {
-          mJ = mC << 1;
+          myMajor = myRow << 1;
         }
         // check to see if the original major will run over
-        oJ = j << 1;
+        originalMajor = major << 1;
         // Console.log(`mC: ${mC.toString(2)}  oJ: ${oJ.toString(2)}`);
         // // Console.log(`init oJ: ${oJ}`);
 
         // !!! this is the problem !!!
-        if (oJ >= (1 << mx)) {
-          oJ = oJ - (1<<mx);
+        if (originalMajor >= (1 << boardSize)) {
+          originalMajor = originalMajor - (1<<boardSize);
         }
         // // Console.log(`add oJ: ${oJ}`);
-        mJ = mJ | oJ;
+        myMajor = myMajor | originalMajor;
 
         // create our minor from our column
-        mN = mC >>> 1;
-        let tmN = n >>> 1;
-        mN = mN | (n >>> 1);
-        mC = mC | c;
+        myMinor = myRow >>> 1;
+        // let tmN = minor >>> 1;
+        myMinor = myMinor | (minor >>> 1);
+        myRow = myRow | row;
         // Console.log(`Column start: ${s.toString(2)}\tNew Colum: ${ (1 << s - 1).toString(2) }\tnew mC ${mC.toString(2)}`);
 
         // Console.log(`Major start: ${j.toString(2)}\tadjusted: ${oJ.toString(2)}\tNew Major: ${mJ.toString(2)}`);
@@ -57,16 +57,16 @@ function calc (mx) {
 
         // Console.log(`Sending to row: ${r+1}  desc:${(mC|mJ|mN).toString(2)}\n`);
 
-        pQ(r+1, mC, mJ, mN);
+        placeQueen(depth+1, myRow, myMajor, myMinor);
       }
       // mR = pR >>> s;
-      mR = mR >>> 1;
+      thisRow = thisRow >>> 1;
     }
     // // Console.log(`Back to row ${r}`);
     return q;
   };
 
-  return pQ();
+  return placeQueen();
 }
 const size = 10;
 const st = Date.now()/1000;

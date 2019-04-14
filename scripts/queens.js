@@ -36,7 +36,6 @@ function calc (mx) {
 
         // create our minor from our column
         mN = mC >>> 1;
-        let tmN = n >>> 1;
         mN = mN | (n >>> 1);
         mC = mC | c;
 
@@ -50,9 +49,9 @@ function calc (mx) {
 }
 
 const size = 10;
-const st = Date.now()/1000;
+const st = Date.now();
 const p = calc(size);
-const end = Date.now()/1000;
-Console.log(`Queens size ${size}: ${p} (in ${end - st} seconds)`);
+const end = Date.now();
+Console.log(`Queens size ${size}: ${p} (in ${(end - st)/1000} seconds)`);
 
 module.exports = calc;
